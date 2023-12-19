@@ -4,11 +4,8 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,9 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.AlertDialogDefaults.containerColor
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -30,17 +25,16 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.spotiglu.ui.theme.SpotIgluTheme
-import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.spotiglu.viewModel.exoplayerViewModel
 
 class MainActivity : ComponentActivity() {
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -83,9 +77,10 @@ class MainActivity : ComponentActivity() {
     }
 
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun ReproductorPantalla(modifier: Modifier) {
+        val contexto = LocalContext.current
+        val exoPlayerViewModel: exoplayerViewModel = viewModel()
         Column (
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -101,18 +96,26 @@ class MainActivity : ComponentActivity() {
             Text(text = "Demolitions Lovers - My Chemical Romance")
             Slider(value = 0f, onValueChange = {}, modifier = Modifier.fillMaxWidth())
             Row() {
-                botonesReproductor(id = R.drawable.aleatorio)
-                botonesReproductor(id = R.drawable.skip_previous)
-                botonesReproductor(id = R.drawable.play)
-                botonesReproductor(id = R.drawable.skip_next)
-                botonesReproductor(id = R.drawable.repetir)
+                LaunchedEffect(Unit) {
+                    exoPlayerViewModel.crearExoPlayer(contexto)
+                    exoPlayerViewModel.reproducirCancion(contexto)
+                }
+                botonesReproductor(id = R.drawable.aleatorio, { })
+                botonesReproductor(id = R.drawable.skip_previous, { })
+                botonesReproductor(id = R.drawable.play) {
+                    exoPlayerViewModel.pausarCancion()
+                }
+                botonesReproductor(id = R.drawable.skip_next) {
+                    exoPlayerViewModel.cambiarCancion(contexto)
+                }
+                botonesReproductor(id = R.drawable.repetir, {})
             }
         }
     }
 
     @Composable
-    fun botonesReproductor(id : Int) {
-        IconButton(onClick = { /*TODO*/ }) {
+    fun botonesReproductor(id : Int, accion: () -> Unit) {
+        IconButton(onClick = accion) {
             Icon(
                 painter = painterResource(id = id),
                 contentDescription = null,
