@@ -41,6 +41,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import com.example.spotiglu.ui.theme.SpotIgluTheme
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.spotiglu.navegacion.GrafoNavegacion
+import com.example.spotiglu.navegacion.Navegacion
+import com.example.spotiglu.pantallas.reproductor
 import com.example.spotiglu.viewModel.exoplayerViewModel
 import com.example.spotiglu.viewModel.viewModelCanciones
 import kotlinx.coroutines.flow.forEach
@@ -78,124 +81,10 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                     ) { padding ->
-                        ReproductorPantalla(modifier = Modifier.padding(padding))
+                        GrafoNavegacion(context = this, modifier = Modifier.padding(padding))
                     }
                 }
             }
-        }
-    }
-
-    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-    @Composable
-    fun ReproductorPantalla(modifier: Modifier) {
-        val viewModelCanciones : viewModelCanciones = viewModel()
-        val contexto = LocalContext.current
-        val exoPlayerViewModel: exoplayerViewModel = viewModel()
-        val listaCanciones = cancionLista()
-        val cancion = viewModelCanciones.cancion.collectAsState().value
-        var progreso = exoPlayerViewModel.progreso.collectAsState().value.toFloat()
-        println("numero de cancion $cancion")
-        Column (
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxSize()
-        ) {
-            //Imagen
-            Image(
-                painter = painterResource(id = listaCanciones.get(cancion).imagen),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(255.dp)
-                    .padding(0.dp, 20.dp)
-            )
-            //Texto de la cancion
-            Text(text = listaCanciones.get(cancion).titulo + " - " + listaCanciones.get(cancion).autor)
-            //Slider
-            Slider(value = progreso, onValueChange = { progreso = it; exoPlayerViewModel.seekTo(it.toLong()) }, modifier = Modifier.fillMaxWidth()
-                , valueRange = 0f .. exoPlayerViewModel.duracion.value.toFloat())
-            Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
-                Text(text = exoPlayerViewModel.progresoMinutos.collectAsState().value)
-                Text(text = exoPlayerViewModel.duracionMinutos.collectAsState().value)
-            }
-            Spacer(modifier = Modifier.height(45.dp))
-            Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
-                LaunchedEffect(Unit) {
-                    exoPlayerViewModel.crearExoPlayer(contexto)
-                    exoPlayerViewModel.reproducirCancion(contexto, listaCanciones.get(cancion).audio)
-                }
-                //Boton aleatorio
-                botonesReproductor(id = R.drawable.aleatorio, {
-                    viewModelCanciones.cambiarColor("Aleatorio")
-                    viewModelCanciones.cambiarAleatorio()
-                                                              }, color = viewModelCanciones.colorAleatorio.collectAsState().value)
-                //Boton previous
-                botonesReproductor(id = R.drawable.skip_previous, {
-                    if (viewModelCanciones.bucle.value){
-                        exoPlayerViewModel.cambiarCancion(contexto, listaCanciones.get(cancion).audio)
-                    }else if (viewModelCanciones.aleatorio.value){
-                        //Hace un historial de canciones para que te lleve a tus canciones anteriores.
-                        if (viewModelCanciones.listaAnteriores.value.size < 1) {
-                                Toast.makeText(contexto, "Ha llegado a la última canción anterior", Toast.LENGTH_SHORT).show()
-                        }else{
-                            val cancionAnterior = viewModelCanciones.listaAnteriores.value.get(viewModelCanciones.listaAnteriores.value.size - 1)
-                            viewModelCanciones.ponerCancion(cancionAnterior)
-                            exoPlayerViewModel.cambiarCancion(contexto, listaCanciones.get(cancionAnterior).audio)
-                            viewModelCanciones.borrarHistorial()
-                            viewModelCanciones.listaAnteriores.value.forEach { e -> println("anteriores: $e") }
-                        }
-                    }else if(cancion < 1) {
-                        viewModelCanciones.agregarHistorial()
-                        viewModelCanciones.cancionMin()
-                        exoPlayerViewModel.cambiarCancion(contexto, listaCanciones.get(cancion + (listaCanciones.size - 1)).audio)
-                    }else{
-                        viewModelCanciones.agregarHistorial()
-                        viewModelCanciones.restarCancion()
-                        exoPlayerViewModel.cambiarCancion(contexto, listaCanciones.get(cancion - 1).audio)
-                    }
-                    viewModelCanciones.cambiarPlay(true)
-                }, color = viewModelCanciones.colorDefault.value)
-                //Boton play
-                botonesReproductor(id = viewModelCanciones.botonPlay.collectAsState().value, {
-                    viewModelCanciones.cambiarPlay(false)
-                    exoPlayerViewModel.pausarCancion()
-                }, color = viewModelCanciones.colorDefault.value)
-                //Boton next
-                botonesReproductor(id = R.drawable.skip_next, {
-                    if (viewModelCanciones.bucle.value){
-                        exoPlayerViewModel.cambiarCancion(contexto, listaCanciones.get(cancion).audio)
-                    }else if (viewModelCanciones.aleatorio.value){
-                        viewModelCanciones.agregarHistorial()
-                        viewModelCanciones.cancionAleatoria()
-                        exoPlayerViewModel.cambiarCancion(contexto, listaCanciones.get(viewModelCanciones.cancion.value).audio)
-                    }else if (cancion >= listaCanciones.size - 1) {
-                        viewModelCanciones.agregarHistorial()
-                        viewModelCanciones.cancionMax()
-                        exoPlayerViewModel.cambiarCancion(contexto, listaCanciones.get(cancion - 4).audio)
-                    }else{
-                        viewModelCanciones.agregarHistorial()
-                        viewModelCanciones.sumarCancion()
-                        exoPlayerViewModel.cambiarCancion(contexto, listaCanciones.get(cancion + 1).audio)
-                    }
-                    viewModelCanciones.cambiarPlay(true)
-                }, color = viewModelCanciones.colorDefault.value)
-                //Boton bucle
-                botonesReproductor(id = R.drawable.repetir, {
-                    viewModelCanciones.cambiarColor("Bucle")
-                    viewModelCanciones.cambiarBucle()
-                } , viewModelCanciones.colorBucle.collectAsState().value)
-            }
-        }
-    }
-
-    @Composable
-    fun botonesReproductor(id : Int, accion: () -> Unit, color: Int) {
-        IconButton(onClick = accion) {
-            Icon(
-                painter = painterResource(id = id),
-                contentDescription = null,
-                modifier = Modifier.size(40.dp),
-                tint = colorResource(id = color)
-            )
         }
     }
 }
