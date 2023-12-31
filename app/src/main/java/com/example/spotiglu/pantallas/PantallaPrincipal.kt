@@ -68,7 +68,7 @@ fun PantallaPrincipal(modifier: Modifier, navController: NavController, exoplaye
 fun crearLazyRow(lista: List<Cancion>, navController: NavController, exoplayerViewModel: exoplayerViewModel) {
     LazyRow() {
         items(items = lista, itemContent = {item -> Card(onClick = {
-            navController.navigate("ReproductorPantalla"); exoplayerViewModel.cambiarValorCancion(item.id)},
+            navController.navigate("ReproductorPantalla"); exoplayerViewModel.cambiarValorCancion(item.id); exoplayerViewModel.cambiarLista(lista)},
             modifier = Modifier
                 .size(165.dp)
                 .padding(10.dp)
