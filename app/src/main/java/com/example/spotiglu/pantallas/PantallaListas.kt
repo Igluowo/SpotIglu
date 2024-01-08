@@ -60,7 +60,7 @@ fun PantallaListas(/*modifier: Modifier,*/ navController: NavController, exoPlay
     Scaffold(
         topBar = { TopAppBar(
             title = { Text(text = stringResource(id = R.string.app_name)) },
-            navigationIcon = { IconButton(onClick = { }) {
+            navigationIcon = { IconButton(onClick = { navController.popBackStack(); exoPlayerViewModel.cambiarCarga()}) {
                 Icon(painter = painterResource(id = R.drawable.atras), contentDescription = null,
                     Modifier.size(30.dp))
             }},
@@ -68,10 +68,10 @@ fun PantallaListas(/*modifier: Modifier,*/ navController: NavController, exoPlay
         bottomBar = {
             BottomAppBar(/*containerColor = colorResource(id = R.color.azulClaro)*/) {
                 Row(horizontalArrangement = Arrangement.SpaceAround, modifier = Modifier.fillMaxWidth()) {
-                    IconButton(onClick = { navController.navigate("PantallaPrincipal") }) {
+                    IconButton(onClick = { navController.navigate("PantallaPrincipal"); exoPlayerViewModel.cambiarCarga() }) {
                         Icon(painter = painterResource(id = R.drawable.home), contentDescription = null)
                     }
-                    IconButton(onClick = { navController.navigate("PantallaBuscador");
+                    IconButton(onClick = { navController.navigate("PantallaBuscador"); exoPlayerViewModel.cambiarCarga()
                         exoPlayerViewModel.cambiarLista(listaTodas()) }) {
                         Icon(painter = painterResource(id = R.drawable.buscar), contentDescription = null, modifier = Modifier.size(30.dp))
                     }

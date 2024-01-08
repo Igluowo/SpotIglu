@@ -60,7 +60,7 @@ fun reproductor(
     Scaffold(
         topBar = { TopAppBar(
             title = { Text(text = stringResource(id = R.string.app_name)) },
-            navigationIcon = { IconButton(onClick = { }) {
+            navigationIcon = { IconButton(onClick = { navController.popBackStack(); }) {
                 Icon(painter = painterResource(id = R.drawable.atras), contentDescription = null,
                     Modifier.size(30.dp))
             }},

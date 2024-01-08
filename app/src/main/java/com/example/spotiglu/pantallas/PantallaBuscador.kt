@@ -47,8 +47,10 @@ fun PantallaBuscador(context: Context, navController: NavController, exoPlayerVi
     var fieldTexto by remember { mutableStateOf("")}
     Scaffold(
         topBar = { TopAppBar(
-            title = { Icon(painter = painterResource(id = R.drawable.atras), contentDescription = "",
-                modifier = Modifier.size(30.dp))},
+            title = { IconButton(onClick = { navController.popBackStack()},
+                content = { Icon(
+                    painter = painterResource(id = R.drawable.atras), contentDescription = "", modifier = Modifier.size(30.dp)) })
+            },
             actions = {
                       TextField(value = fieldTexto, onValueChange = {fieldTexto = it}, leadingIcon = {
                           Icon(painter = painterResource(id = R.drawable.buscar), contentDescription = "")
@@ -57,7 +59,7 @@ fun PantallaBuscador(context: Context, navController: NavController, exoPlayerVi
         )
         },
         bottomBar = {
-            BottomAppBar(/*containerColor = colorResource(id = R.color.azulClaro)*/) {
+            BottomAppBar() {
                 Row(horizontalArrangement = Arrangement.SpaceAround, modifier = Modifier.fillMaxWidth()) {
                     IconButton(onClick = { navController.navigate("PantallaPrincipal") }) {
                         Icon(painter = painterResource(id = R.drawable.home), contentDescription = null)
@@ -76,29 +78,31 @@ fun PantallaBuscador(context: Context, navController: NavController, exoPlayerVi
             Text(text = "Seleccione una cancion")
             LazyColumn(Modifier.fillMaxWidth()) {
                 items(items = listaCanciones) { item ->
-                    Card(
-                        onClick = {
-                            navController.navigate("ReproductorPantalla"); exoPlayerViewModel.cambiarValorCancion(
-                            item.id
-                        )
-                        },
-                        modifier = Modifier
-                            .padding(10.dp)
-                            .fillMaxWidth(),
-                        shape = RectangleShape,
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surface
-                        )
-                    ) {
-                        Row {
-                            Image(
-                                painter = painterResource(id = item.imagen),
-                                contentDescription = "",
-                                modifier = Modifier.size(65.dp)
+                    if (item.autor.startsWith(fieldTexto) || item.titulo.startsWith(fieldTexto)) {
+                        Card(
+                            onClick = {
+                                navController.navigate("ReproductorPantalla"); exoPlayerViewModel.cambiarValorCancion(
+                                item.id
                             )
-                            Column(Modifier.padding(5.dp)) {
-                                Text(text = item.titulo)
-                                Text(text = item.album)
+                            },
+                            modifier = Modifier
+                                .padding(10.dp)
+                                .fillMaxWidth(),
+                            shape = RectangleShape,
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.surface
+                            )
+                        ) {
+                            Row {
+                                Image(
+                                    painter = painterResource(id = item.imagen),
+                                    contentDescription = "",
+                                    modifier = Modifier.size(65.dp)
+                                )
+                                Column(Modifier.padding(5.dp)) {
+                                    Text(text = item.titulo)
+                                    Text(text = item.autor)
+                                }
                             }
                         }
                     }
