@@ -47,7 +47,7 @@ fun PantallaBuscador(context: Context, navController: NavController, exoPlayerVi
     var fieldTexto by remember { mutableStateOf("")}
     Scaffold(
         topBar = { TopAppBar(
-            title = { IconButton(onClick = { navController.popBackStack()},
+            title = { IconButton(onClick = { navController.navigate("PantallaPrincipal")},
                 content = { Icon(
                     painter = painterResource(id = R.drawable.atras), contentDescription = "", modifier = Modifier.size(30.dp)) })
             },

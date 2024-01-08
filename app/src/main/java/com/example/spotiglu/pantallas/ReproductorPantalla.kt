@@ -59,8 +59,8 @@ fun reproductor(
     })
     Scaffold(
         topBar = { TopAppBar(
-            title = { Text(text = stringResource(id = R.string.app_name)) },
-            navigationIcon = { IconButton(onClick = { navController.popBackStack(); }) {
+            title = { Text(text = stringResource(id = R.string.app_name)); },
+            navigationIcon = { IconButton(onClick = { navController.popBackStack(); exoPlayerViewModel.quitarCancion() }) {
                 Icon(painter = painterResource(id = R.drawable.atras), contentDescription = null,
                     Modifier.size(30.dp))
             }},
@@ -69,10 +69,10 @@ fun reproductor(
         bottomBar = {
             BottomAppBar(/*containerColor = colorResource(id = R.color.azulClaro)*/) {
                 Row(horizontalArrangement = Arrangement.SpaceAround, modifier = Modifier.fillMaxWidth()) {
-                    IconButton(onClick = { navController.navigate("PantallaPrincipal") }) {
+                    IconButton(onClick = { navController.navigate("PantallaPrincipal"); exoPlayerViewModel.quitarCancion() }) {
                         Icon(painter = painterResource(id = R.drawable.home), contentDescription = null)
                     }
-                    IconButton(onClick = { navController.navigate("PantallaBuscador");
+                    IconButton(onClick = { navController.navigate("PantallaBuscador"); exoPlayerViewModel.quitarCancion()
                         exoPlayerViewModel.cambiarLista(listaTodas()) }) {
                         Icon(painter = painterResource(id = R.drawable.buscar), contentDescription = null, modifier = Modifier.size(30.dp))
                     }
