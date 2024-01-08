@@ -34,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.spotiglu.R
@@ -78,7 +79,8 @@ fun PantallaBuscador(context: Context, navController: NavController, exoPlayerVi
             Text(text = "Seleccione una cancion")
             LazyColumn(Modifier.fillMaxWidth()) {
                 items(items = listaCanciones) { item ->
-                    if (item.autor.startsWith(fieldTexto) || item.titulo.startsWith(fieldTexto)) {
+                    if (item.autor.lowercase().startsWith(fieldTexto.lowercase()) ||
+                        item.titulo.lowercase().startsWith(fieldTexto.lowercase()) || fieldTexto == "") {
                         Card(
                             onClick = {
                                 navController.navigate("ReproductorPantalla"); exoPlayerViewModel.cambiarValorCancion(
