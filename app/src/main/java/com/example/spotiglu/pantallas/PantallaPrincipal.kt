@@ -2,18 +2,25 @@ package com.example.spotiglu.pantallas
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -26,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -33,32 +41,58 @@ import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import com.example.spotiglu.Cancion
 import com.example.spotiglu.Lista
+import com.example.spotiglu.R
 import com.example.spotiglu.albumes
 import com.example.spotiglu.cancionLista
+import com.example.spotiglu.listaTodas
+import com.example.spotiglu.navegacion.GrafoNavegacion
 import com.example.spotiglu.playlist
 import com.example.spotiglu.viewModel.exoplayerViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PantallaPrincipal(modifier: Modifier, navController: NavController, exoplayerViewModel: exoplayerViewModel) {
+fun PantallaPrincipal(navController: NavController, exoplayerViewModel: exoplayerViewModel) {
     val lista = cancionLista()
     val albumes = albumes()
     val playlist = playlist()
     var carga = exoplayerViewModel.carga.collectAsState().value
     if (carga) {
-        com.example.spotiglu.pantallas.carga()
+        carga()
     }
-    Column(modifier = modifier) {
-        Text(text = "Canciones populares")
-        Row() {
-            crearLazyRow(lista = lista, navController = navController, exoplayerViewModel)
+    Scaffold(
+        topBar = { TopAppBar(
+            title = { Text(text = stringResource(id = R.string.app_name)) },
+        )
+        },
+        bottomBar = {
+            BottomAppBar(/*containerColor = colorResource(id = R.color.azulClaro)*/) {
+                Row(horizontalArrangement = Arrangement.SpaceAround, modifier = Modifier.fillMaxWidth()) {
+                    IconButton(onClick = { navController.navigate("PantallaPrincipal") }
+                    ) {
+                        Icon(painter = painterResource(id = R.drawable.home), contentDescription = null)
+                    }
+                    IconButton(onClick = { navController.navigate("PantallaBuscador");
+                        exoplayerViewModel.cambiarLista(listaTodas()) }
+                    ) {
+                        Icon(painter = painterResource(id = R.drawable.buscar), contentDescription = null, modifier = Modifier.size(30.dp))
+                    }
+                }
+            }
         }
-        Text(text = "Albumes para ti")
-        Row {
-            crearLazyRowListas(lista = albumes, navController, exoplayerViewModel)
-        }
-        Text(text = "Playlist para ti")
-        Row {
-            crearLazyRowListas(lista = playlist, navController, exoplayerViewModel)
+    ) { padding ->
+        Column(modifier = Modifier.padding(padding)) {
+            Text(text = "Canciones populares")
+            Row() {
+                crearLazyRow(lista = lista, navController = navController, exoplayerViewModel)
+            }
+            Text(text = "Albumes para ti")
+            Row {
+                crearLazyRowListas(lista = albumes, navController, exoplayerViewModel)
+            }
+            Text(text = "Playlist para ti")
+            Row {
+                crearLazyRowListas(lista = playlist, navController, exoplayerViewModel)
+            }
         }
     }
 }

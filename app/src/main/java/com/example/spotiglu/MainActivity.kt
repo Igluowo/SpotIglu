@@ -60,29 +60,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Scaffold(
-                        topBar = { TopAppBar(
-                            title = { Text(text = stringResource(id = R.string.app_name)) },
-                            navigationIcon = { IconButton(onClick = { }) {
-                                Icon(painter = painterResource(id = R.drawable.atras), contentDescription = null,
-                                    Modifier.size(30.dp))
-                            }},
-                        )},
-                        bottomBar = {
-                            BottomAppBar(/*containerColor = colorResource(id = R.color.azulClaro)*/) {
-                                Row(horizontalArrangement = Arrangement.SpaceAround, modifier = Modifier.fillMaxWidth()) {
-                                    IconButton(onClick = { /*TODO*/ }) {
-                                        Icon(painter = painterResource(id = R.drawable.home), contentDescription = null)
-                                    }
-                                    IconButton(onClick = { /*TODO*/ }) {
-                                        Icon(painter = painterResource(id = R.drawable.buscar), contentDescription = null, modifier = Modifier.size(30.dp))
-                                    }
-                                }
-                            }
-                        }
-                    ) { padding ->
-                        GrafoNavegacion(context = this, modifier = Modifier.padding(padding))
-                    }
+                    GrafoNavegacion(context = this)
                 }
             }
         }

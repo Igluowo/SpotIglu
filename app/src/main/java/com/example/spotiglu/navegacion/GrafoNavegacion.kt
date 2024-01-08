@@ -9,37 +9,41 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.spotiglu.pantallas.PantallaBuscador
 import com.example.spotiglu.pantallas.PantallaListas
 import com.example.spotiglu.pantallas.PantallaPrincipal
 import com.example.spotiglu.pantallas.reproductor
 import com.example.spotiglu.viewModel.exoplayerViewModel
 
 @Composable
-fun GrafoNavegacion(context: Context, modifier: Modifier) {
+fun GrafoNavegacion(context: Context) {
     val navController = rememberNavController()
     val exoplayerViewModel: exoplayerViewModel = viewModel()
     NavHost(navController = navController, startDestination = Navegacion.PantallaPrincipal.ruta) {
         composable(route = Navegacion.ReproductorPantalla.ruta) {
             reproductor(
-                modifier = modifier,
                 navController = navController,
-                exoplayerViewModel1 = exoplayerViewModel
+                exoPlayerViewModel = exoplayerViewModel
             )
         }
         composable(route = Navegacion.PantallaPrincipal.ruta) {
             PantallaPrincipal(
-                modifier = modifier,
                 navController = navController,
                 exoplayerViewModel = exoplayerViewModel
             )
         }
         composable(route = Navegacion.PantallaListas.ruta) {
             PantallaListas(
-                modifier = modifier,
                 navController = navController,
                 exoPlayerViewModel = exoplayerViewModel,
                 context = context
             )
+        }
+        composable(route = Navegacion.PantallaBuscador.ruta) {
+            PantallaBuscador(
+                context = context,
+                navController = navController,
+                exoPlayerViewModel = exoplayerViewModel)
         }
     }
 }

@@ -13,10 +13,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -25,23 +29,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.spotiglu.R
 import com.example.spotiglu.cancionLista
+import com.example.spotiglu.listaTodas
 import com.example.spotiglu.viewModel.exoplayerViewModel
 import com.example.spotiglu.viewModel.viewModelCanciones
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun reproductor(
-    modifier: Modifier,
     navController: NavController,
-    exoplayerViewModel1: exoplayerViewModel
+    exoPlayerViewModel: exoplayerViewModel,
 ) {
     val viewModelCanciones: viewModelCanciones = viewModel()
     val contexto = LocalContext.current
-    val exoPlayerViewModel = exoplayerViewModel1
     val listaCanciones = exoPlayerViewModel.lista.collectAsState().value
     val cancion = exoPlayerViewModel.cancion.collectAsState().value
     var progreso = exoPlayerViewModel.progreso.collectAsState().value.toFloat()
@@ -52,11 +57,32 @@ fun reproductor(
             navController.popBackStack()
         }
     })
-    println("numero de cancion $cancion")
-    Column(
+    Scaffold(
+        topBar = { TopAppBar(
+            title = { Text(text = stringResource(id = R.string.app_name)) },
+            navigationIcon = { IconButton(onClick = { }) {
+                Icon(painter = painterResource(id = R.drawable.atras), contentDescription = null,
+                    Modifier.size(30.dp))
+            }},
+        )
+        },
+        bottomBar = {
+            BottomAppBar(/*containerColor = colorResource(id = R.color.azulClaro)*/) {
+                Row(horizontalArrangement = Arrangement.SpaceAround, modifier = Modifier.fillMaxWidth()) {
+                    IconButton(onClick = { navController.navigate("PantallaPrincipal") }) {
+                        Icon(painter = painterResource(id = R.drawable.home), contentDescription = null)
+                    }
+                    IconButton(onClick = { navController.navigate("PantallaBuscador");
+                        exoPlayerViewModel.cambiarLista(listaTodas()) }) {
+                        Icon(painter = painterResource(id = R.drawable.buscar), contentDescription = null, modifier = Modifier.size(30.dp))
+                    }
+                }
+            }
+        }
+    ) { padding -> Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize().padding(padding)
     ) {
         //Imagen
         Image(
@@ -171,6 +197,7 @@ fun reproductor(
                 exoPlayerViewModel.cambiarBucle()
             }, viewModelCanciones.colorBucle.collectAsState().value)
         }
+    }
     }
 }
 
